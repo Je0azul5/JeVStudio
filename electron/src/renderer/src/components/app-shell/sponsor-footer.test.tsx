@@ -22,7 +22,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it('places Discord before X and donate before the collapse control', async () => {
+it('keeps the footer controls without Discord or GitHub stars', () => {
   render(<SponsorFooter />);
   const buttons = screen.getByRole('contentinfo').querySelectorAll('button');
   expect(buttons).toHaveLength(5);
@@ -35,11 +35,7 @@ it('places Discord before X and donate before the collapse control', async () =>
     'https://voicestudio.sh',
   );
   expect(screen.queryByRole('img')).toBeNull();
-  const discord = screen.getByRole('link', { name: 'support.join_discord' });
-  expect(discord).toHaveAttribute('href', 'https://discord.gg/bzQavDfVV9');
-  expect(discord.nextElementSibling).toBe(buttons[2]);
-  fireEvent.click(discord);
-  await waitFor(() => expect(mock.open).toHaveBeenCalledWith('https://discord.gg/bzQavDfVV9'));
+  expect(screen.queryByRole('link', { name: 'support.join_discord' })).not.toBeInTheDocument();
 });
 
 it.each(['idebpalash', 'voicestudiosh'])('opens @%s in the external browser', async (handle) => {
@@ -64,14 +60,8 @@ it('opens compact support links from the heart and links to the full page', asyn
     'href',
     'https://paypal.me/palashCoder',
   );
-  expect(screen.getByRole('link', { name: 'support.star_github' })).toHaveAttribute(
-    'href',
-    'https://github.com/debpalash/VoiceStudio',
-  );
-  expect(screen.getByRole('link', { name: 'support.join_discord' })).toHaveAttribute(
-    'href',
-    'https://discord.gg/bzQavDfVV9',
-  );
+  expect(screen.queryByRole('link', { name: 'support.star_github' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: 'support.join_discord' })).not.toBeInTheDocument();
   expect(document.querySelector('.sponsor-support-popup a[href*="discord"]')).toBeNull();
   fireEvent.click(screen.getByRole('link', { name: 'Ko-fi' }));
   await waitFor(() => expect(mock.open).toHaveBeenCalledWith('https://ko-fi.com/debpalash'));
@@ -98,7 +88,7 @@ it('shows sourced audience details on sponsor focus', async () => {
   expect(await screen.findByText('sponsorSlot.footer_promo')).toBeVisible();
   expect(screen.getByText('22,678')).toBeVisible();
   expect(screen.getByText('207,236')).toBeVisible();
-  expect(screen.getByText('35,336')).toBeVisible();
+  expect(screen.queryByText('sponsorSlot.footer_stars')).not.toBeInTheDocument();
   expect(screen.getByText('sponsorSlot.footer_stats_note')).toBeVisible();
 });
 

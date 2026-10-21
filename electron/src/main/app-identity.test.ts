@@ -10,17 +10,21 @@ import {
 describe('installAppIdentity', () => {
   it('names Electron internals consistently', () => {
     const setName = vi.fn();
+    const setPath = vi.fn();
+    const getPath = vi.fn(() => '/existing-app-data');
 
-    installAppIdentity({ setName });
+    installAppIdentity({ setName, setPath, getPath });
 
     expect(setName).toHaveBeenCalledOnce();
-    expect(setName).toHaveBeenCalledWith('VoiceStudio');
+    expect(setName).toHaveBeenCalledWith('JeVStudio');
+    expect(getPath).toHaveBeenCalledWith('appData');
+    expect(setPath).toHaveBeenCalledWith('userData', resolve('/existing-app-data', 'VoiceStudio'));
   });
 
-  it('defines the complete native macOS menu with VoiceStudio app labels', () => {
+  it('defines the complete native macOS menu with JeVStudio app labels', () => {
     const template = createMacApplicationMenuTemplate();
 
-    expect(template[0]).toMatchObject({ label: 'VoiceStudio' });
+    expect(template[0]).toMatchObject({ label: 'JeVStudio' });
     expect(template[0]?.submenu).toEqual(
       expect.arrayContaining([{ role: 'about' }, { role: 'hide' }, { role: 'quit' }]),
     );
@@ -54,7 +58,7 @@ describe('installAppIdentity', () => {
     installMacApplicationMenu(application, menu, '0.5.6');
 
     expect(application.setAboutPanelOptions).toHaveBeenCalledWith({
-      applicationName: 'VoiceStudio',
+      applicationName: 'JeVStudio',
       applicationVersion: '0.5.6',
       version: '0.5.6',
     });

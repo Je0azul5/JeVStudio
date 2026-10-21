@@ -18,10 +18,8 @@ import palashAvatar from '../../../../../public/social/palash.png';
 import studioAvatar from '../../../../../public/social/voicestudio.jpg';
 import kofiLogo from '../../../../../public/social/kofi.svg';
 import paypalLogo from '../../../../../public/social/paypal.svg';
-import githubLogo from '../../../../../public/social/github.svg';
-import discordLogo from '../../../../../public/social/discord.svg';
 import { getBridge } from '@/components/bridge';
-import { DISCORD_URL, REPO_URL, X_URL } from '@shared/utils/contactLinks';
+import { X_URL } from '@shared/utils/contactLinks';
 import { KOFI_URL, PAYPAL_URL } from '@shared/utils/donateLinks';
 import './sponsor-footer.css';
 
@@ -31,7 +29,6 @@ import './sponsor-footer.css';
 const SPONSOR_REACH = {
   downloads: '22,678',
   views: '207,236',
-  stars: '35,336',
 } as const;
 
 /** Lives in the content column, so it never covers the editor or its sidebar. */
@@ -100,10 +97,6 @@ export function SponsorFooter() {
                 <dt>{t('sponsorSlot.footer_views')}</dt>
                 <dd>{SPONSOR_REACH.views}</dd>
               </div>
-              <div>
-                <dt>{t('sponsorSlot.footer_stars')}</dt>
-                <dd>{SPONSOR_REACH.stars}</dd>
-              </div>
             </dl>
             <small>{t('sponsorSlot.footer_stats_note')}</small>
           </TooltipContent>
@@ -111,9 +104,8 @@ export function SponsorFooter() {
         <div className="sponsor-footer-links">
           {[
             { label: t('contact.website'), href: 'https://voicestudio.sh', Icon: GlobeIcon },
-            { label: t('support.join_discord'), href: DISCORD_URL, logo: discordLogo },
           ].map(
-            ({ label, href, Icon, logo }) => (
+            ({ label, href, Icon }) => (
               <Tooltip key={href}>
                 <TooltipTrigger
                   render={
@@ -132,11 +124,7 @@ export function SponsorFooter() {
                     />
                   }
                 >
-                  {Icon ? (
-                    <Icon aria-hidden="true" className="size-4" />
-                  ) : (
-                    <img src={logo} alt="" aria-hidden="true" className="size-4" />
-                  )}
+                  <Icon aria-hidden="true" className="size-4" />
                 </TooltipTrigger>
                 <TooltipContent surface="theme" side="top">
                   {label}
@@ -242,12 +230,6 @@ export function SponsorFooter() {
                 {[
                   { label: 'Ko-fi', href: KOFI_URL, logo: kofiLogo, brand: 'kofi' },
                   { label: 'PayPal', href: PAYPAL_URL, logo: paypalLogo, brand: 'paypal' },
-                  {
-                    label: t('support.star_github'),
-                    href: REPO_URL,
-                    logo: githubLogo,
-                    brand: 'github',
-                  },
                 ].map(({ label, href, logo, brand }) => (
                   <a
                     key={href}

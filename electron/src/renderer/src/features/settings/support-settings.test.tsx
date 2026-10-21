@@ -41,13 +41,13 @@ it('opens only the explicit destination and applies selected amounts only to Pay
     'href',
     'https://github.com/debpalash/VoiceStudio/issues/new?template=sponsor.yml',
   );
-  fireEvent.click(screen.getByRole('button', { name: 'supportPlans.get_pro' }));
-  expect(mock.navigate).toHaveBeenCalledWith({ to: '/pro' });
 });
 
-it('keeps contact and Pro actions visible and lets the donor clear an amount', () => {
+it('removes Pro, GitHub stars and Discord while preserving contact and donation controls', () => {
   render(<SupportSettings />);
-  expect(screen.getByRole('button', { name: 'supportPlans.get_pro' })).toBeVisible();
+  expect(screen.queryByRole('button', { name: 'supportPlans.get_pro' })).not.toBeInTheDocument();
+  expect(screen.queryByRole('link', { name: 'support.star_github' })).not.toBeInTheDocument();
+  expect(document.querySelector('a[href*="discord"]')).toBeNull();
   expect(screen.getByRole('link', { name: 'contact.security_cta' })).toBeVisible();
   expect(screen.getByRole('button', { name: 'donate.custom' })).toHaveAttribute(
     'aria-pressed',

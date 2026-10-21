@@ -1,6 +1,7 @@
 import i18next from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import en from './locales/en.json';
+import es from './locales/es.json';
 import { matchLocale } from './locale-match';
 
 export const SUPPORTED_LOCALES = [
@@ -30,9 +31,11 @@ export const SUPPORTED_LOCALES = [
 export type AppLocale = (typeof SUPPORTED_LOCALES)[number];
 
 const LOCALE_KEY = 'voicestudio.locale';
+const LOCALE_DEFAULT_KEY = 'voicestudio.locale.default';
 const localeModules = import.meta.glob<{ default: Record<string, unknown> }>([
   './locales/*.json',
   '!./locales/en.json',
+  '!./locales/es.json',
 ]);
 const loading = new Map<AppLocale, Promise<void>>();
 
@@ -42,18 +45,19 @@ function normalizeLocale(value: string | null | undefined): AppLocale | null {
 
 function initialLocale(): AppLocale {
   try {
+    // Apply this edition's Spanish default once, including existing profiles.
+    // Later explicit language choices remain persistent.
+    if (localStorage.getItem(LOCALE_DEFAULT_KEY) !== 'es') {
+      localStorage.setItem(LOCALE_KEY, 'es');
+      localStorage.setItem(LOCALE_DEFAULT_KEY, 'es');
+      return 'es';
+    }
     const saved = normalizeLocale(localStorage.getItem(LOCALE_KEY));
     if (saved) return saved;
   } catch {
     // Storage can be unavailable in hardened browser contexts.
   }
-  if (typeof navigator !== 'undefined') {
-    for (const candidate of navigator.languages || [navigator.language]) {
-      const locale = normalizeLocale(candidate);
-      if (locale) return locale;
-    }
-  }
-  return 'en';
+  return 'es';
 }
 
 async function loadLocale(locale: AppLocale): Promise<void> {
@@ -82,7 +86,7 @@ const selectedLocale = initialLocale();
 void i18next
   .use(initReactI18next)
   .init({
-    resources: { en: { translation: en } },
+    resources: { en: { translation: en }, es: { translation: es } },
     lng: selectedLocale,
     fallbackLng: 'en',
     partialBundledLanguages: true,

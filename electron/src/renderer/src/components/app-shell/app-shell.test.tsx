@@ -13,7 +13,9 @@ vi.mock('@tanstack/react-router', () => ({
 vi.mock('./workspace-sidebar', () => ({
   WorkspaceSidebar: () => <aside data-testid="main-sidebar" />,
 }));
-vi.mock('./sponsor-footer', () => ({ SponsorFooter: () => null }));
+vi.mock('./sponsor-footer', () => ({
+  SponsorFooter: () => <footer data-testid="sponsor-footer" />,
+}));
 vi.mock('./repair-agent-dock', () => ({ RepairAgentDock: () => null }));
 vi.mock('./system-notifications', () => ({ SystemNotifications: () => null }));
 vi.mock('@/components/command-palette', () => ({ CommandPalette: () => null }));
@@ -33,4 +35,11 @@ it('renders the main sidebar on workspace routes as before', () => {
   route.pathname = '/clone';
   render(<AppShell />);
   expect(screen.getByTestId('main-sidebar')).toBeInTheDocument();
+});
+
+it('keeps the home screen free of the sponsor strip', () => {
+  route.pathname = '/';
+  render(<AppShell />);
+  expect(screen.getByTestId('outlet')).toBeInTheDocument();
+  expect(screen.queryByTestId('sponsor-footer')).not.toBeInTheDocument();
 });

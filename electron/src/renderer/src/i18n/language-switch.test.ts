@@ -16,6 +16,7 @@ vi.mock('./locales/fr.json', async () => {
 });
 
 it('keeps the latest language choice when an earlier bundle finishes loading later', async () => {
+  localStorage.setItem('voicestudio.locale.default', 'es');
   localStorage.setItem('voicestudio.locale', 'en');
   const { default: i18n, setAppLanguage } = await import('./index');
   const earlier = setAppLanguage('de');

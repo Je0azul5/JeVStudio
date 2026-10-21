@@ -13,8 +13,9 @@ import {
 } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { PRODUCT_NAME } from '../../config/app-config.mjs';
 
-const APP_NAME = 'VoiceStudio';
+const APP_NAME = PRODUCT_NAME;
 const here = dirname(fileURLToPath(import.meta.url));
 const electronRoot = resolve(here, '..');
 const repoRoot = resolve(electronRoot, '..');
@@ -116,6 +117,9 @@ export function prepareMacDevElectron({
     replacePlistValue(infoPlist, 'CFBundleShortVersionString', appVersion, runCommand);
     replacePlistValue(infoPlist, 'CFBundleVersion', appVersion, runCommand);
     copyFileSync(iconPath, join(stagingBundle, 'Contents', 'Resources', `${APP_NAME}.icns`));
+    // Clone-copy can preserve Finder info/resource forks that codesign rejects.
+    // Clean only the disposable bundle, after all branding files are in place.
+    runCommand('xattr', ['-cr', stagingBundle]);
     runCommand('codesign', ['--force', '--deep', '--sign', '-', stagingBundle]);
     writeFileSync(join(stagingRoot, 'brand-manifest.json'), expectedManifest);
 

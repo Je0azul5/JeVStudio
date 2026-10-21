@@ -1,6 +1,4 @@
-import { runRendererTask } from '@/lib/global-error-recovery';
 import {
-  ArrowUpRightIcon,
   CheckIcon,
   CoffeeIcon,
   CreditCardIcon,
@@ -8,12 +6,9 @@ import {
   Globe2Icon,
   LightbulbIcon,
   MailIcon,
-  MessagesSquareIcon,
   RadioIcon,
   ShieldCheckIcon,
-  StarIcon,
 } from 'lucide-react';
-import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { brandIcon } from '@/lib/brand';
@@ -28,7 +23,6 @@ import {
 } from '@shared/config/sponsors';
 import {
   ISSUES_URL,
-  DISCORD_URL,
   SECURITY_URL,
   EMAIL,
   WEBSITE_URL,
@@ -38,7 +32,6 @@ import './support-settings.css';
 
 export function SupportSettings() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [amount, setAmount] = useState<number | 'custom' | null>(null);
   const sponsorGroups = [...SPONSOR_TIERS, '']
     .map((tier) => ({
@@ -50,7 +43,6 @@ export function SupportSettings() {
     .filter((group) => group.sponsors.length);
   const channels = [
     ['contact.feature_cta', ISSUES_URL, LightbulbIcon],
-    ['contact.community_cta', DISCORD_URL, MessagesSquareIcon],
     ['contact.follow_cta', X_URL, RadioIcon],
     ['contact.security_cta', SECURITY_URL, ShieldCheckIcon],
     ['contact.email', 'mailto:' + EMAIL, MailIcon],
@@ -106,18 +98,6 @@ export function SupportSettings() {
         </div>
       </section>
 
-      <div className="support-community" role="group" aria-label={t('support.other_ways')}>
-        <span>{t('support.other_ways')}</span>
-        <ExternalLink href="https://github.com/debpalash/VoiceStudio">
-          <StarIcon aria-hidden="true" />
-          {t('support.star_github')}
-        </ExternalLink>
-        <ExternalLink href={DISCORD_URL}>
-          <MessagesSquareIcon aria-hidden="true" />
-          {t('support.join_discord')}
-        </ExternalLink>
-      </div>
-
       <div className="support-opportunities">
         <section
           className="support-tile support-sponsors"
@@ -154,22 +134,6 @@ export function SupportSettings() {
               {t('support.sponsors_learn_more')}
             </ExternalLink>
           </div>
-        </section>
-        <section className="support-tile support-license" aria-labelledby="support-pro-heading">
-          <span className="mb-4 w-fit rounded-md bg-primary/10 px-2 py-1 text-xs font-semibold tracking-wider text-primary">
-            {t('supportPlans.pro')}
-          </span>
-          <h2 id="support-pro-heading">{t('proPage.title')}</h2>
-          <p>{t('proPage.hero_body')}</p>
-          <p>{t('proPage.billing_note')}</p>
-          <button
-            type="button"
-            onClick={() => runRendererTask('Open Pro', () => navigate({ to: '/pro' }))}
-            className="mt-4 flex min-h-11 items-center gap-2 text-sm font-medium text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
-          >
-            {t('supportPlans.get_pro')}
-            <ArrowUpRightIcon aria-hidden="true" className="size-3" />
-          </button>
         </section>
       </div>
 

@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
 import '@/i18n';
+import i18next from 'i18next';
 import { IntegrationDetailPage } from './integration-detail-page';
 import { INTEGRATION_SETUPS } from './setup-registry';
 import en from '@/i18n/locales/en.json';
@@ -13,7 +14,8 @@ vi.mock('@shared/config/sponsors', () => ({
 const route = vi.hoisted(() => ({ slug: 'claude-code' }));
 const save = vi.hoisted(() => vi.fn());
 vi.mock('@/lib/local-export', () => ({ saveLocalFile: save }));
-beforeEach(() => {
+beforeEach(async () => {
+  await i18next.changeLanguage('en');
   route.slug = 'claude-code';
   vi.clearAllMocks();
 });
@@ -85,7 +87,7 @@ it('shows the Codex TOML export and one heading per panel', () => {
     '~/.codex/config.toml',
   );
   expect(screen.getByRole('heading', { name: 'Set up Codex CLI' })).toBeInTheDocument();
-  expect(screen.getByText('Works with VoiceStudio')).toBeInTheDocument();
+  expect(screen.getByText('Works with JeVStudio')).toBeInTheDocument();
   expect(screen.queryByRole('heading', { name: 'Details' })).toBeNull();
 });
 
@@ -112,7 +114,7 @@ it('shows the OpenAI Agents snippet for the live backend', async () => {
   Object.defineProperty(navigator, 'clipboard', { value: { writeText: copy }, configurable: true });
   render(<IntegrationDetailPage />);
   expect(screen.getByText(/Point the OpenAI Agents SDK voice pipeline/)).toBeInTheDocument();
-  expect(screen.getByText('Works with VoiceStudio')).toBeInTheDocument();
+  expect(screen.getByText('Works with JeVStudio')).toBeInTheDocument();
   expect(screen.getByText('Local language model')).toBeInTheDocument();
   fireEvent.click(screen.getByRole('button', { name: 'Copy' }));
   await waitFor(() => expect(copy).toHaveBeenCalledTimes(1));
@@ -125,7 +127,7 @@ it('renders Twilio from the registry as a working connector with its setup panel
   render(<IntegrationDetailPage />);
   expect(screen.getByRole('heading', { name: 'Twilio', level: 2 })).toBeInTheDocument();
   expect(screen.getByText('Twilio phone setup panel')).toBeInTheDocument();
-  expect(screen.getByText('Works with VoiceStudio')).toBeInTheDocument();
+  expect(screen.getByText('Works with JeVStudio')).toBeInTheDocument();
   expect(screen.getByText('Phone calls')).toBeInTheDocument();
   expect(screen.queryByText(/Directory examples only/)).toBeNull();
   expect(screen.queryByText(/Setup is unavailable/)).toBeNull();

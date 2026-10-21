@@ -29,10 +29,14 @@ def test_current_version_is_in_lockstep_everywhere() -> None:
         assert match and match.group(1) == CURRENT_VERSION, path
 
 
-def test_visible_brand_surfaces_say_voicestudio() -> None:
+def test_visible_brand_surfaces_say_jevstudio() -> None:
     visible_files = ("electron/build/Info.plist", "electron/src/renderer/index.html")
     product_name = json.loads((ROOT / "config/app.json").read_text())["productName"]
-    assert product_name == "VoiceStudio"
+    assert product_name == "JeVStudio"
+    for locale in (ROOT / "electron/src/renderer/src/i18n/locales").glob("*.json"):
+        catalog = json.loads(locale.read_text(encoding="utf-8"))
+        assert catalog["homeUi"]["title"] == product_name, locale
+        assert catalog["app"]["name"] == product_name, locale
     for path in visible_files:
         text = (ROOT / path).read_text()
         assert "__APP_PRODUCT_NAME__" in text, path

@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="docs/logo.png" alt="VoiceStudio" width="88" />
-  <h1>VoiceStudio</h1>
+  <img src="docs/logo.png" alt="JeVStudio" width="88" />
+  <h1>JeVStudio</h1>
   <p>
     <a href="https://trendshift.io/repositories/28176?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-28176" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/28176" alt="VoiceStudio ranking on Trendshift" width="220" height="48" /></a>
   </p>
@@ -20,6 +20,8 @@
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0-blue" alt="AGPL-3.0" /></a>
   </p>
 </div>
+
+This edition is named **JeVStudio**, based on VoiceStudio, with the sponsor strip removed from the home screen. Existing data locations and compatibility identifiers are preserved.
 
 ![A tour of the Electron app: voice cloning, voice design, dubbing, and model management](docs/media/electron/voicestudio.gif)
 

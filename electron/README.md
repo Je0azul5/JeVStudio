@@ -1,4 +1,7 @@
-# VoiceStudio — Electron desktop app
+# JeVStudio — Electron desktop app
+
+This edition is named JeVStudio and has no sponsor strip on the home screen.
+Existing VoiceStudio data locations and compatibility identifiers are preserved.
 
 Electron is the only maintained desktop app for voice cloning, stories, dubbing,
 transcription, voice design, and workflows. Tauri is archived at v0.5.3. For
@@ -29,6 +32,11 @@ bun run dev        # electron-vite: main + preload + renderer with HMR
 The development launcher resolves Electron's binary before starting Vite.
 Electron 42+ downloads it on the first launch, so that launch needs network
 access; subsequent launches reuse the installed binary.
+
+On macOS the launcher brands a cached copy of Electron as VoiceStudio, clears
+extended attributes from that temporary copy, and ad-hoc signs it. This avoids
+the `resource fork, Finder information, or similar detritus not allowed` signing
+error without modifying the original Electron installation.
 
 On launch the shell probes `http://127.0.0.1:3900`. If a backend is already
 running (for example `bun run dev:api` from the repo root) it **attaches**;
@@ -155,10 +163,16 @@ playback persist locally. Settings remain accessible without a ready backend.
 The sidebar footer places engine status and model above a separate Settings and
 Theme control row, with a labeled Settings link on the left and Theme on the right.
 
+The interface defaults to Spanish on every operating system, with its translation
+bundled at startup. Existing profiles switch to Spanish once; subsequent explicit
+language choices in Settings are remembered.
+Workspace headers omit Get Pro and the GitHub star counter; the footer and
+Support settings omit Discord, GitHub star requests, and Pro promotion.
+
 The workspace footer shows Integrations, Become a Sponsor, and a right-aligned X.
-They open the integration directory, partner inquiry form, and dedicated
-VoiceStudio Pro page respectively. The sponsor hover/focus card shows dated
-GitHub reach data. The Pro page compares Free and Pro, opens website pricing,
+They open the integration directory, partner inquiry form, and X profiles
+respectively. The sponsor hover/focus card shows dated download and view data.
+The directly accessible Pro page compares Free and Pro, opens website pricing,
 and leaves licence activation to the separate Pro distribution. Checkout remains
 gated until the paid tools and terms are ready.
 

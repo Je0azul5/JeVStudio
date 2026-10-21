@@ -122,7 +122,7 @@ describe('Electron binary resolution', () => {
 });
 
 describe('macOS development bundle branding', () => {
-  it('uses a VoiceStudio bundle while preserving Electron development detection', () => {
+  it('uses a JeVStudio bundle while preserving Electron development detection', () => {
     const plan = createMacDevBundlePlan({
       electronExecutable: '/source/Electron.app/Contents/MacOS/Electron',
       electronVersion: '44.3.0',
@@ -134,17 +134,17 @@ describe('macOS development bundle branding', () => {
 
     expect(plan.sourceBundle).toBe(resolve('/source/Electron.app'));
     expect(plan.destinationBundle).toBe(
-      join(resolve('/cache'), '44.3.0-0.5.6-arm64-1024-123_5', 'VoiceStudio.app'),
+      join(resolve('/cache'), '44.3.0-0.5.6-arm64-1024-123_5', 'JeVStudio.app'),
     );
     expect(basename(plan.destinationExecutable)).toBe('Electron');
     expect(plan.destinationExecutable).toContain(
-      join('VoiceStudio.app', 'Contents', 'MacOS', 'Electron'),
+      join('JeVStudio.app', 'Contents', 'MacOS', 'Electron'),
     );
   });
 });
 
 describe('macOS development bundle cache repair', () => {
-  // cp/plutil/codesign are macOS tools; the fake runner materialises the same layout.
+  // cp/plutil/xattr/codesign are macOS tools; the fake runner materialises the same layout.
   const fakeRun = (command: string, args: string[]) => {
     if (command !== 'cp') return;
     const target = args[args.length - 1];
@@ -152,6 +152,41 @@ describe('macOS development bundle cache repair', () => {
     mkdirSync(join(target, 'Contents', 'Resources'), { recursive: true });
     writeFileSync(join(target, 'Contents', 'MacOS', 'Electron'), 'binary');
   };
+
+  it('cleans copied bundle metadata after branding and before signing', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'vs-dev-metadata-'));
+    try {
+      const icon = join(dir, 'icon.icns');
+      writeFileSync(icon, 'icon');
+      let cleanedBundle: string | undefined;
+      let signed = false;
+      prepareMacDevElectron({
+        electronExecutable: join(dir, 'src', 'Electron.app', 'Contents', 'MacOS', 'Electron'),
+        electronVersion: '44.3.0',
+        appVersion: '0.5.6',
+        iconPath: icon,
+        cacheRoot: join(dir, 'cache'),
+        runCommand: (command: string, args: string[]) => {
+          fakeRun(command, args);
+          if (command === 'xattr') {
+            expect(args.slice(0, -1)).toEqual(['-cr']);
+            cleanedBundle = args[args.length - 1];
+            expect(cleanedBundle).toContain(join('cache', '.staging-'));
+            expect(readFileSync(join(cleanedBundle!, 'Contents', 'Resources', 'JeVStudio.icns'), 'utf8')).toBe('icon');
+          }
+          if (command === 'codesign') {
+            if (cleanedBundle !== args[args.length - 1]) {
+              throw new Error('resource fork, Finder information, or similar detritus not allowed');
+            }
+            signed = true;
+          }
+        },
+      });
+      expect(signed).toBe(true);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
 
   it('replaces a cached bundle that lost its executable instead of failing with ENOTEMPTY', () => {
     const dir = mkdtempSync(join(tmpdir(), 'vs-dev-cache-'));
